@@ -18,6 +18,9 @@ Thumbs.db
 *.o
 *.so
 
+*compiled.js
+*.js.map
+
 lib-cov
 *.seed
 *.log

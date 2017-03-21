@@ -11,12 +11,14 @@ const bot = new Telegraf(telegramConstants.telegramToken);
 
 bot.telegram.setWebhook('https://telegram-bot-farm.herokuapp.com/', {
   content: 'server-cert.pem'
-})
+});
 
 bot.command('naztikmessage', (ctx) => {
   console.log('se recibio solicitud!!');
   ctx.reply('Estoy vivo!')
-})
+});
+
+bot.startPolling();
 
 
 var index = require('./routes/index');
