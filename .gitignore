@@ -34,3 +34,6 @@ build
 
 node_modules
 
+lib/
+public/images/
+public/javascripts/

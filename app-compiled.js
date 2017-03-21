@@ -14,6 +14,7 @@ bot.telegram.setWebhook('https://telegram-bot-farm.herokuapp.com/', {
 });
 
 bot.command('naztikmessage', ctx => {
+  console.log('se recibio solicitud!!');
   ctx.reply('Estoy vivo!');
 });
 
