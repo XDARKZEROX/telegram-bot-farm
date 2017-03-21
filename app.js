@@ -13,7 +13,9 @@ bot.telegram.setWebhook('https://telegram-bot-farm.herokuapp.com/', {
   content: 'server-cert.pem'
 })
 
-
+bot.command('naztikmessage', (ctx) => {
+  ctx.reply('Estoy vivo!')
+})
 
 
 var index = require('./routes/index');

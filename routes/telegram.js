@@ -14,11 +14,6 @@ router.get('/', function(req, res, next) {
     });
 });
 
-bot.command('naztikmessage', (ctx) => {
-    ctx.reply('Estoy vivo!')
-})
-
-
 module.exports = router;
 
 
