@@ -6,9 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var telegramConstants = require('./config/config');
+
+/*
 const Telegraf = require('telegraf');
 const bot = new Telegraf(telegramConstants.telegramToken);
-
 bot.telegram.setWebhook('https://telegram-bot-farm.herokuapp.com/', {
   content: 'server-cert.pem'
 });
@@ -19,7 +20,7 @@ bot.command('naztikmessage', (ctx) => {
 });
 
 bot.startPolling();
-
+*/
 
 var index = require('./routes/index');
 var users = require('./routes/users');
