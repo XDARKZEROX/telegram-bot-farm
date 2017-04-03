@@ -15,7 +15,7 @@
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.2",
     "striptags": "^3.0.1",
-    "telegraf": "^3.6.7",
+    "telebot": "^1.0.7",
     "underscore": "^1.8.3"
   }
 }

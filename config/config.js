@@ -1,4 +1,4 @@
 var config = {
-    telegramToken: '367716818:AAHhSvOGtST5tMrrMM1J4IiiXEBs09DaFxs'
+    botToken: '347327781:AAEnVd1Iyivthjxux-LgWkZ69J01RSd-tKw'
 }
 module.exports = config;

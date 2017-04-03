@@ -16,5 +16,4 @@ router.get('/today', function(req, res, next) {
   searchController.getBirthdayToday(req, res);
 });
 
-
 module.exports = router;

@@ -3,9 +3,7 @@ var express = require('express'),
     fs = require('fs'),
     moment = require('moment');
 
-
 module.exports = {
-
     getBirthdays : function(req, res){
         var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
         res.send(birthdays);
@@ -14,12 +12,13 @@ module.exports = {
     getBirthdayToday: function(req, res) {
         var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
         var systemDate  =  moment().format('DD-MM');
-        var response = [];
+        var birthdaysToday = [];
         birthdays['birthdays'].forEach(function(item, index) {
             if(systemDate===moment(item.date).format('DD-MM')){
-                response.push(item);
+                birthdaysToday.push(item);
             }
         });
         res.send(response);
    }
+
 }

@@ -4,28 +4,25 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var telegramConstants = require('./config/config');
-
-/*
-const Telegraf = require('telegraf');
-const bot = new Telegraf(telegramConstants.telegramToken);
-bot.telegram.setWebhook('https://telegram-bot-farm.herokuapp.com/', {
-  content: 'server-cert.pem'
-});
-
-bot.command('naztikmessage', (ctx) => {
-  console.log('se recibio solicitud!!');
-  ctx.reply('Estoy vivo!')
-});
-
-bot.startPolling();
-*/
-
 var index = require('./routes/index');
 var users = require('./routes/users');
 var telegram = require('./routes/telegram');
 var app = express();
+
+const TeleBot = require('telebot');
+const bot = new TeleBot(telegramConstants.botToken);
+
+bot.on('text', msg => {
+  let fromId = msg.from.id;
+  console.log(fromId);
+  let firstName = msg.from.first_name;
+  let reply = msg.message_id;
+  return bot.sendMessage(fromId, `Hello`, { reply });
+
+});
+
+bot.connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
