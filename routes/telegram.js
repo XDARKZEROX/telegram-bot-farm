@@ -36,6 +36,10 @@ bot.on('/today', msg => {
     return bot.sendMessage(msg.chat.id, birthdays,  { reply, parse });
 });
 
+bot.on('/birthdays', msg => {
+
+});
+
 
 bot.connect();
 module.exports = router;

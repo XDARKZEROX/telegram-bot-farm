@@ -8,10 +8,10 @@ module.exports = {
     // Obtienes toda la lista de cumpleaños!
     getBirthdays : function(req, res){
         var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
-        var text=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
+        
+    var text=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
 
         birthdays['birthdays'].forEach(function(item, index) {
-            
             text += `- ${item.name} ( ${moment(item.date).format('MMMM DD')} ) \n`;
         });
 
