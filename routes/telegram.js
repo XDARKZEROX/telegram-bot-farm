@@ -14,12 +14,12 @@ router.get('/', function(req, res, next) {
 });
 
 /*
-bot.on('text', msg => {
+bot.on('sticker', msg => {
     let fromId = msg.from.id;
     //console.log(fromId);
     let firstName = msg.from.first_name;
     let reply = msg.message_id;
-    console.log(reply);
+    console.log(msg);
     bot.getChat('-1001079582906').then((botInfo) => {
         //console.log(botInfo);
     });
@@ -29,6 +29,7 @@ bot.on('text', msg => {
 });*/
 
 bot.on('/birthdays', msg => {
+
     birthdayController.getBirthdays(function(rs) {
         let reply = msg.message_id;
         let parse = 'html';
@@ -43,8 +44,10 @@ bot.on('/today', msg => {
 });
 
 bot.on('/help', msg => {
-    var birthdays = birthdayController.getHelp();
-    
+
+    var text = birthdayController.getHelp();
+    let parse = 'html';
+    bot.sendMessage(msg.from.id, text,  { parse });
     
 /*    return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
     // Start updating message
