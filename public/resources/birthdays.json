@@ -6,6 +6,9 @@
     { "name" : "Agustin" , "codename" : "agriqugu" , "date" : "1979-09-12" },
     { "name" : "Andy" , "codename" : "Tibu7"  , "date" : "1990-10-31" },
     { "name" : "Felix" , "codename" : "Eberhard19" , "date" : "1986-11-13" },
-    { "name" : "Alexander" , "codename" : "XDARKZEROX" , "date" : "1991-11-24" }
+    { "name" : "Alexander" , "codename" : "XDARKZEROX" , "date" : "1991-11-24" },
+    { "name" : "Fausto" , "codename" : "NAZTIK" , "date" : "1994-06-05" },
+    { "name" : "Fernando" , "codename" : "estimu" , "date" : "1990-02-17" }
+    
   ]
 }

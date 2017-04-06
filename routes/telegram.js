@@ -28,18 +28,38 @@ bot.on('text', msg => {
     //return bot.sendMessage(fromId, 'Hola ' + firstName, { reply });
 });*/
 
-bot.on('/today', msg => {
-    var birthdays = birthdayController.getBirthdays();
-    let reply = msg.message_id;
-    console.log(msg);
-    let parse = 'html';
-    return bot.sendMessage(msg.chat.id, birthdays,  { reply, parse });
-});
-
 bot.on('/birthdays', msg => {
+    birthdayController.getBirthdays(function(rs) {
+        let reply = msg.message_id;
+        let parse = 'html';
+        return bot.sendMessage(msg.chat.id, rs,  { reply, parse });
+    });
 
 });
 
+bot.on('/today', msg => {
+
+
+});
+
+bot.on('/help', msg => {
+    var birthdays = birthdayController.getHelp();
+    
+    
+/*    return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
+    // Start updating message
+        var chatId = msg.from.id;
+        var msgId = re.result.message_id;
+        console.log(msgId);
+        console.log(re);
+        //editText({chatId & messageId | inlineMsgId}, <text>)
+        bot.editText(
+            { chatId , msgId }, `Cual editado prro`,
+            { parse: 'html' }
+        ).catch(error => console.log('Error:', error));   
+   
+    });*/
+});
 
 bot.connect();
 module.exports = router;

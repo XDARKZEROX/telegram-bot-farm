@@ -2,21 +2,25 @@ var express = require('express'),
     router = express.Router(),
     fs = require('fs'),
     moment = require('moment');
-    emoji = require('node-emoji')
+    emoji = require('node-emoji'),
+    firebase = require('firebase'),
+    config = require('../../config/config')
+
+firebase.initializeApp(config.firebase);
 
 module.exports = {
     // Obtienes toda la lista de cumpleaños!
-    getBirthdays : function(req, res){
-        var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
-        
-    var text=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
-
-        birthdays['birthdays'].forEach(function(item, index) {
-            text += `- ${item.name} ( ${moment(item.date).format('MMMM DD')} ) \n`;
-        });
-
-        return text;
-        //res.send(birthdays);
+    getBirthdays : function(callback){
+        //Antes cargaba de un archivo plano
+        //var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
+        var text=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
+        var birthdays = firebase.database().ref().child("birthdays");
+        birthdays.on('value', (snap) => {
+            snap.forEach((child) => {
+                text += `- ${child.val().name} ( ${moment(child.val().date).format('MMMM DD')} ) \n`;    
+            });
+            callback(text);
+        })
     },
 
     getBirthdayToday: function(req, res) {
@@ -29,6 +33,12 @@ module.exports = {
             }
         });
         res.send(response);
+   },
+
+   getHelp: function(req, res) {
+        var text = `Welcome to the Bot Birthday Reminder \n\n`;
+        
+        return text;
    }
 
 }
