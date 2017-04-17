@@ -29,7 +29,6 @@ bot.on('sticker', msg => {
 });*/
 
 bot.on('/birthdays', msg => {
-
     birthdayController.getBirthdays(function(rs) {
         let reply = msg.message_id;
         let parse = 'html';
@@ -48,8 +47,9 @@ bot.on('/help', msg => {
     var text = birthdayController.getHelp();
     let parse = 'html';
     bot.sendMessage(msg.from.id, text,  { parse });
-    
-/*    return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
+
+    //Refactorizar esto    
+    /* return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
     // Start updating message
         var chatId = msg.from.id;
         var msgId = re.result.message_id;
@@ -62,6 +62,25 @@ bot.on('/help', msg => {
         ).catch(error => console.log('Error:', error));   
    
     });*/
+});
+
+bot.on('inlineQuery', msg => {
+
+    let query = msg.query;
+    
+    // Create a new answer list object
+    const answers = bot.answerList(msg.id, { cacheTime: 60 });
+    let message = msg.id;
+
+    answers.addArticle({
+        id: 'query',
+        title: 'Inline Title',
+        description: `Escribe el nombre de alguien para consultar su cumple`,
+        message_text: message
+    });
+
+    // Send answers
+    return bot.answerQuery(answers);
 });
 
 bot.connect();

@@ -1,4 +1,4 @@
-var config = {
+const config = {
     botToken: '347327781:AAEnVd1Iyivthjxux-LgWkZ69J01RSd-tKw',
     chatId: '-1001079582906',
     firebase: {
@@ -8,6 +8,7 @@ var config = {
     	projectId: "database-bot-birthday",
     	storageBucket: "database-bot-birthday.appspot.com",
     	messagingSenderId: "440795918390"
-	}
+	},
+	firebase_rest: 'https://database-bot-birthday.firebaseio.com/users.json'
 }
 module.exports = config;
