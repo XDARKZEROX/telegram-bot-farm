@@ -8,7 +8,9 @@ var  firebase = require('firebase'),
 //firebase.initializeApp(config.firebase);
 //var users = firebase.database().ref().child("users");
 var client = new Client();
-
+firebase.initializeApp(config.firebase);
+var ref = firebase.database().ref().child("users"); 
+		
 module.exports = {
 
 	getAll : function(callback) { 
@@ -22,8 +24,7 @@ module.exports = {
             }
         ], function (err, result) {
         	callback(users);
-   			// result now equals 'done'    
-		});
+   		});
 
 		/*
 		users.on("value", (snap) = {
@@ -37,8 +38,10 @@ module.exports = {
 		});*/	
 	},
 
-	getUserById: function(callback) {
-
+	getUserByCodename: function(param, callback) {
+		ref.orderByChild('codename').equalTo(param).once('value').then(function (snapshot) {
+			callback(snapshot.val());
+		});
 
 	}
 
