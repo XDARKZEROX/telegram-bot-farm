@@ -5,6 +5,8 @@ const TeleBot = require('telebot');
 const bot = new TeleBot(telegramConstants.botToken);
 var birthdayController = require('../app/controller/birthdayController.js');
 
+bot.use(require('../modules/ask.js'));
+
 router.get('/', function(req, res, next) {
     console.log(bot.telegram);
     //Creamos instanciamos el tg
@@ -13,33 +15,29 @@ router.get('/', function(req, res, next) {
     });
 });
 
-/*
-bot.on('sticker', msg => {
-    let fromId = msg.from.id;
-    //console.log(fromId);
-    let firstName = msg.from.first_name;
-    let reply = msg.message_id;
-    console.log(msg);
-    bot.getChat('-1001079582906').then((botInfo) => {
-        //console.log(botInfo);
-    });
-
-    return bot.sendMessage(fromId, `Hola ${ firstName } , deja de spamearme carajo!`);
-    //return bot.sendMessage(fromId, 'Hola ' + firstName, { reply });
-});*/
-
 bot.on('/birthdays', msg => {
     birthdayController.getBirthdays(function(rs) {
         let reply = msg.message_id;
         let parse = 'html';
         return bot.sendMessage(msg.chat.id, rs,  { reply, parse });
     });
-
 });
 
-bot.on('/today', msg => {
+bot.on('/find', msg => {
 
+     const id = msg.chat.id;    
+     return bot.sendMessage(id, 'De quien deseas buscar su Informaci\u00f3n? (Ingresa su codename sin el @)', { ask: 'codename' });
+});
 
+bot.on('ask.codename', msg => {
+
+  let codename = msg.text.trim();
+  const id = msg.chat.id;
+  let parse = 'html';
+
+  birthdayController.getBirthdayFromCodename(codename, function(rs) {
+        return bot.sendMessage(id, rs, { parse });
+  });
 });
 
 bot.on('/help', msg => {
@@ -64,23 +62,20 @@ bot.on('/help', msg => {
     });*/
 });
 
-bot.on('inlineQuery', msg => {
+bot.on(['/profile'], msg => {
+  
+  let markup = bot.keyboard([
+    ['Agregar/Editar', '/Cancelar']
+  ], { resize: true });
 
-    let query = msg.query;
-    
-    // Create a new answer list object
-    const answers = bot.answerList(msg.id, { cacheTime: 60 });
-    let message = msg.id;
+   return bot.sendMessage(msg.chat.id, 'Escoge una de las opciones', { markup });
 
-    answers.addArticle({
-        id: 'query',
-        title: 'Inline Title',
-        description: `Escribe el nombre de alguien para consultar su cumple`,
-        message_text: message
-    });
+});
 
-    // Send answers
-    return bot.answerQuery(answers);
+bot.on('/Cancelar', msg => {
+  return bot.sendMessage(
+    msg.chat.id, 'Operaci\u00f3n Cancelada', { markup: 'hide' }
+  );
 });
 
 bot.connect();

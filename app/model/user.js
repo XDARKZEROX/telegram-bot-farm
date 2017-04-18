@@ -39,9 +39,11 @@ module.exports = {
 	},
 
 	getUserByCodename: function(param, callback) {
-		ref.orderByChild('codename').equalTo(param).once('value').then(function (snapshot) {
+		ref.orderByChild('codename').equalTo(param.toLowerCase()).once('value').then(function (snapshot) {
 			callback(snapshot.val());
-		});
+		}).catch((error) => {
+    		console.log(error);
+    	});
 
 	}
 
