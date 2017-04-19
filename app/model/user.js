@@ -5,8 +5,6 @@ var  firebase = require('firebase'),
 	 Client = require('node-rest-client').Client,
 	 async = require('async');
 
-//firebase.initializeApp(config.firebase);
-//var users = firebase.database().ref().child("users");
 var client = new Client();
 firebase.initializeApp(config.firebase);
 var ref = firebase.database().ref().child("users"); 
@@ -25,26 +23,19 @@ module.exports = {
         ], function (err, result) {
         	callback(users);
    		});
-
-		/*
-		users.on("value", (snap) = {
-  			snap.forEach((child) => {
-				users[child.val().codename]['date'] = child.val().date;
-				users[child.val().codename]['name'] = child.val().name;
-			});
-		
-		}, function (errorObject) {
-  			console.log("Error de lectura: " + errorObject.code);
-		});*/	
 	},
 
 	getUserByCodename: function(param, callback) {
 		ref.orderByChild('codename').equalTo(param.toLowerCase()).once('value').then(function (snapshot) {
-			callback(snapshot.val());
-		}).catch((error) => {
+			let rs;
+			snapshot.forEach(function(childSnapshot) {
+        		rs = childSnapshot.val();
+        	})
+        	callback(rs);
+
+        }).catch((error) => {
     		console.log(error);
     	});
-
 	}
 
 }	   

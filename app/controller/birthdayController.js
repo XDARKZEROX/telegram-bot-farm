@@ -12,14 +12,14 @@ module.exports = {
     getBirthdays : function(callback){
         //Antes cargaba de un archivo plano
         //var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
-        let text=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
+        let message=`<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
         let users;
         
         userModel.getAll(function(response){
             response.forEach(data => {
-                text += `- ${data.name} ( ${moment(data.date).format('MMMM DD')} ) \n`; 
+                message += `- ${data.name} ( ${moment(data.date).format('MMMM DD')} ) \n`; 
             })
-            callback(text);
+            callback(message);
         });
     },
 
@@ -37,30 +37,30 @@ module.exports = {
 
    getHelp: function() {
         
-        let text = `<b>Bienvenid@ al bot de agenda Cumplea\u00f1era </b> \n\n` + 
+        let message = `<b>Bienvenid@ al bot de agenda Cumplea\u00f1era </b> \n\n` + 
         `A continuacion la lista de comandos de este bot: \n` + 
         `- /birthdays - Lista los cumpleaños de todos los registrados. \n` +  
         `- /today - Averigua quien o quienes cumplen el dia de hoy. \n \n` +
         `Si estás interesado en colaborar con el desarrollo de este bot, puedes visitar el repositorio en <a href="https://github.com/XDARKZEROX/telegram-bot-farm/">Github</a>`; 
-        return text;
+        return message;
     },
 
     getBirthdayFromCodename : function(codename, callback) {
-        let text = '';
+        let message = '';
 
         userModel.getUserByCodename(codename, function(response){
             if(response != undefined || response != null){
-                console.log(response);
-                text = ` lo encontre `; 
+                message = ` ${response.name} (@${response.codename.toUpperCase()}), Fecha de Nacimiento: ${response.date}  `;
             } else {
-                text = `No encontr\u00e9 a alguien con ese codename, prueba nuevamente.`
+                message = `No encontr\u00e9 a alguien con ese codename, prueba nuevamente.`
             }
-
-           callback(text);
+            callback(message);
         });
-
-       
     }
-
 }
 
+/*
+50
+
+
+*/

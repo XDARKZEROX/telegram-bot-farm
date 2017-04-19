@@ -4,6 +4,8 @@ var express = require('express'),
 const TeleBot = require('telebot');
 const bot = new TeleBot(telegramConstants.botToken);
 var birthdayController = require('../app/controller/birthdayController.js');
+var profileController = require('../app/controller/profileController.js');
+
 
 bot.use(require('../modules/ask.js'));
 
@@ -65,16 +67,26 @@ bot.on('/help', msg => {
 bot.on(['/profile'], msg => {
   
   let markup = bot.keyboard([
-    ['Agregar/Editar', '/Cancelar']
+    ['/MiPerfil', '/Cancelar']
   ], { resize: true });
-
    return bot.sendMessage(msg.chat.id, 'Escoge una de las opciones', { markup });
-
 });
 
 bot.on('/Cancelar', msg => {
   return bot.sendMessage(
     msg.chat.id, 'Operaci\u00f3n Cancelada', { markup: 'hide' }
+  );
+});
+
+bot.on('/MiPerfil', msg => {
+  let message = '';
+  profileController.searchProfile(msg.from.username, function(rs) {
+    console.log(rs); 
+  });
+
+
+  return bot.sendMessage(
+    msg.chat.id, 'Bienvenido al menu principal'
   );
 });
 
