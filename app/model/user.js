@@ -1,10 +1,9 @@
 'use strict'
 
 var  firebase = require('firebase'),
-	 config = config = require('../../config/config'),
+	 config = require('../../config/config'),
 	 Client = require('node-rest-client').Client,
 	 async = require('async');
-
 var client = new Client();
 firebase.initializeApp(config.firebase);
 var ref = firebase.database().ref().child("users"); 
@@ -30,7 +29,7 @@ module.exports = {
 			let rs;
 			snapshot.forEach(function(childSnapshot) {
         		rs = childSnapshot.val();
-        	})
+			});
         	callback(rs);
 
         }).catch((error) => {

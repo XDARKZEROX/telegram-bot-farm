@@ -10,18 +10,21 @@ var express = require('express'),
 module.exports = {
 
 	searchProfile: function (codename, callback) {
-        var IsProfileCreated = false;
         //Primero buscamos si el usuario posee un perfil creado o no.
         userModel.getUserByCodename(codename, function(response){
             if(response != undefined || response != null){
-                IsProfileCreated = true;
+                callback({
+                    status: true,
+                    data : response
+                });
+            } else {
+                    callback({
+                    status: false,
+                    data : null
+                });
             }
-            callback(IsProfileCreated);
         });
 
 		
 	}
-
-
-
 }

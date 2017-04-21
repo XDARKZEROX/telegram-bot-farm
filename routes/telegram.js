@@ -1,5 +1,6 @@
 var express = require('express'),
     router = express.Router(),
+    emoji = require('node-emoji'),
     telegramConstants = require("../config/config");
 const TeleBot = require('telebot');
 const bot = new TeleBot(telegramConstants.botToken);
@@ -26,7 +27,6 @@ bot.on('/birthdays', msg => {
 });
 
 bot.on('/find', msg => {
-
      const id = msg.chat.id;    
      return bot.sendMessage(id, 'De quien deseas buscar su Informaci\u00f3n? (Ingresa su codename sin el @)', { ask: 'codename' });
 });
@@ -66,10 +66,10 @@ bot.on('/help', msg => {
 
 bot.on(['/profile'], msg => {
   
-  let markup = bot.keyboard([
-    ['/MiPerfil', '/Cancelar']
-  ], { resize: true });
-   return bot.sendMessage(msg.chat.id, 'Escoge una de las opciones', { markup });
+    let markup = bot.inlineKeyboard([
+        [bot.inlineButton('Perfil', { callback: 'this_is_data' })]
+    ]);
+    return bot.sendMessage(msg.chat.id, 'Escoge una de las opciones', { markup });
 });
 
 bot.on('/Cancelar', msg => {
@@ -81,13 +81,16 @@ bot.on('/Cancelar', msg => {
 bot.on('/MiPerfil', msg => {
   let message = '';
   profileController.searchProfile(msg.from.username, function(rs) {
-    console.log(rs); 
-  });
-
-
-  return bot.sendMessage(
-    msg.chat.id, 'Bienvenido al menu principal'
-  );
+    if(rs.status){
+        return bot.sendMessage(
+            msg.chat.id, 'Parece que ya te tengo registrado. Deseas editar tu informaci\u00f3n?'
+        );
+    } else {
+        return bot.sendMessage(
+            msg.chat.id, 'Parece que no tengo datos tuyos todavia.'
+        );
+    }
+    });
 });
 
 bot.connect();
