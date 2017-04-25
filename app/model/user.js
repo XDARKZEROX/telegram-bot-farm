@@ -35,6 +35,15 @@ module.exports = {
         }).catch((error) => {
     		console.log(error);
     	});
+	},
+
+	updateNameFromCodename: function(codename, name) {
+		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(function (snapshot) {
+			snapshot.ref.update({ name: name })
+		}).catch((error) => {
+			console.log(error);
+		});
+
 	}
 
 }	   

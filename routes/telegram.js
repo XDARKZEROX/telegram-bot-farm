@@ -3,11 +3,18 @@ var express = require('express'),
     emoji = require('node-emoji'),
     telegramConstants = require("../config/config");
 const TeleBot = require('telebot');
-const bot = new TeleBot(telegramConstants.botToken);
+const bot = new TeleBot({
+    token: telegramConstants.botToken,
+    polling: { // Optional. Use polling.
+        interval: 60, // Optional. How often check updates (in ms).
+        timeout: 0, // Optional. Update polling timeout (0 - short polling).
+        limit: 100, // Optional. Limits the number of updates to be retrieved.
+        retryTimeout: 1000, // Optional. Reconnecting timeout (in ms).
+        allowedUpdates: [] // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates regardless of type.
+    }
+});
 var birthdayController = require('../app/controller/birthdayController.js');
 var profileController = require('../app/controller/profileController.js');
-
-
 bot.use(require('../modules/ask.js'));
 
 router.get('/', function(req, res, next) {
@@ -65,11 +72,11 @@ bot.on('/help', msg => {
 });
 
 bot.on(['/profile'], msg => {
-  
     let markup = bot.inlineKeyboard([
-        [bot.inlineButton('Perfil', { callback: 'this_is_data' })]
+        [bot.inlineButton('Mi Perfil', { callback: 'perfil' }),
+         bot.inlineButton('Cancelar', { callback: 'cancelar' })]
     ]);
-    return bot.sendMessage(msg.chat.id, 'Escoge una de las opciones', { markup });
+    return bot.sendMessage(msg.from.id, 'Escoge una de las opciones', { markup });
 });
 
 bot.on('/Cancelar', msg => {
@@ -78,19 +85,51 @@ bot.on('/Cancelar', msg => {
   );
 });
 
-bot.on('/MiPerfil', msg => {
-  let message = '';
-  profileController.searchProfile(msg.from.username, function(rs) {
-    if(rs.status){
-        return bot.sendMessage(
-            msg.chat.id, 'Parece que ya te tengo registrado. Deseas editar tu informaci\u00f3n?'
-        );
-    } else {
-        return bot.sendMessage(
-            msg.chat.id, 'Parece que no tengo datos tuyos todavia.'
-        );
+bot.on('callbackQuery', msg => {
+
+    let message = '';
+    if(msg.data == 'perfil'){
+        profileController.searchProfile(msg.from.username, function(rs) {
+            let markup;
+            if(rs.status){
+                markup = bot.inlineKeyboard([[bot.inlineButton('Editar', { callback: 'editar' })]]);
+                message = 'Parece que ya te tengo registrado. Deseas editar tu informaci\u00f3n?';
+            } else {
+                markup = bot.inlineKeyboard([[bot.inlineButton('Agregar Informaci\u00f3n', { callback: 'agregar'})]]);
+                message = 'Parece que no tengo datos tuyos todavia.';
+            }
+            console.log(msg);
+            return bot.sendMessage(msg.from.id, message , { markup });
+        });
     }
+    if(msg.data == 'editar'){
+        let markup = bot.inlineKeyboard([
+            [
+                bot.inlineButton('Fecha de Nacimiento', { callback: 'fecha' }),
+                bot.inlineButton('Nombre', { callback: 'nombre' })
+            ]
+        ]);
+        return bot.sendMessage(msg.from.id, 'Escoge que campo deseas actualizar' , { markup });
+    }
+    if(msg.data == 'nombre'){
+        return bot.sendMessage(msg.from.id, 'Ingresa el nuevo nombre', { ask: 'nombre' });
+    }
+    if(msg.data == 'fecha'){
+        return bot.sendMessage(msg.from.id, 'Ingres la fecha de tu nacimiento', { ask: 'fecha' });
+    }
+});
+
+bot.on('ask.nombre', msg => {
+    let newName = msg.text.trim();
+    const id = msg.from.id;
+
+    profileController.updateName(msg.from.username, newName, function(rs) {
+        console.log(rs);
     });
+});
+
+bot.on('ask.fecha', msg => {
+
 });
 
 bot.connect();
