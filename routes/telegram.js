@@ -1,21 +1,13 @@
 var express = require('express'),
     router = express.Router(),
-    emoji = require('node-emoji'),
-    telegramConstants = require("../config/config");
-const TeleBot = require('telebot');
-const bot = new TeleBot({
-    token: telegramConstants.botToken,
-    polling: { // Optional. Use polling.
-        interval: 60, // Optional. How often check updates (in ms).
-        timeout: 0, // Optional. Update polling timeout (0 - short polling).
-        limit: 100, // Optional. Limits the number of updates to be retrieved.
-        retryTimeout: 1000, // Optional. Reconnecting timeout (in ms).
-        allowedUpdates: [] // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates regardless of type.
-    }
-});
+    moment = require('moment');
+var bot = require('../config/database/firebase');
 var birthdayController = require('../app/controller/birthdayController.js');
 var profileController = require('../app/controller/profileController.js');
+const nodeCache = require( "node-cache" );
+const agentCache = new nodeCache();
 bot.use(require('../modules/ask.js'));
+
 
 router.get('/', function(req, res, next) {
     console.log(bot.telegram);
@@ -38,37 +30,10 @@ bot.on('/find', msg => {
      return bot.sendMessage(id, 'De quien deseas buscar su Informaci\u00f3n? (Ingresa su codename sin el @)', { ask: 'codename' });
 });
 
-bot.on('ask.codename', msg => {
-
-  let codename = msg.text.trim();
-  const id = msg.chat.id;
-  let parse = 'html';
-
-  birthdayController.getBirthdayFromCodename(codename, function(rs) {
-        return bot.sendMessage(id, rs, { parse });
-  });
-});
-
 bot.on('/help', msg => {
-
     var text = birthdayController.getHelp();
     let parse = 'html';
     bot.sendMessage(msg.from.id, text,  { parse });
-
-    //Refactorizar esto    
-    /* return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
-    // Start updating message
-        var chatId = msg.from.id;
-        var msgId = re.result.message_id;
-        console.log(msgId);
-        console.log(re);
-        //editText({chatId & messageId | inlineMsgId}, <text>)
-        bot.editText(
-            { chatId , msgId }, `Cual editado prro`,
-            { parse: 'html' }
-        ).catch(error => console.log('Error:', error));   
-   
-    });*/
 });
 
 bot.on(['/profile'], msg => {
@@ -115,8 +80,22 @@ bot.on('callbackQuery', msg => {
         return bot.sendMessage(msg.from.id, 'Ingresa el nuevo nombre', { ask: 'nombre' });
     }
     if(msg.data == 'fecha'){
-        return bot.sendMessage(msg.from.id, 'Ingres la fecha de tu nacimiento', { ask: 'fecha' });
+        return bot.sendMessage(msg.from.id, 'Ingresa la fecha de tu nacimiento (YYYY-MM-DD)', { ask: 'fecha' });
     }
+    if(msg.data == 'agregar'){
+        return bot.sendMessage(msg.from.id, 'Perfecto. Para empezar ingresa tu nombre', { ask: 'addNombre' });
+    }
+});
+
+
+bot.on('ask.codename', msg => {
+    let codename = msg.text.trim();
+    const id = msg.chat.id;
+    let parse = 'html';
+
+    birthdayController.getBirthdayFromCodename(codename, function(rs) {
+        return bot.sendMessage(id, rs, { parse });
+    });
 });
 
 bot.on('ask.nombre', msg => {
@@ -129,8 +108,42 @@ bot.on('ask.nombre', msg => {
 });
 
 bot.on('ask.fecha', msg => {
-
+    //Validamos la fecha
+    if(moment(msg.text.trim(), ["YYYY-MM-DD"], true).isValid()){
+        console.log('valido');
+    } else {
+        return bot.sendMessage(msg.from.id, 'El formato de fecha (YYYY-MM-DD) no es v\u00E1lido, prueba nuevamente', { ask: 'fecha' });
+    }
 });
 
-bot.connect();
+bot.on('ask.addNombre', msg => {
+    //si es necesario validar
+    agentCache.set("name", msg.text);
+
+    return bot.sendMessage(msg.from.id, `Bienvenido ${msg.text}. Ahora por favor ingresa tu Codename (Sin el @)`, { ask: 'addCodename' });
+});
+
+bot.on('ask.addCodename', msg => {
+    //si es necesario validar
+    agentCache.set("codename", msg.text);
+    return bot.sendMessage(msg.from.id, `Para finalizar. Ingresa tu fecha de nacimiento (YYYY-MM-DD)`, { ask: 'addFecNac' });
+});
+
+bot.on('ask.addFecNac', msg => {
+    //si es necesario validar
+    if(moment(msg.text.trim(), ["YYYY-MM-DD"], true).isValid()){
+        agentCache.set("date", msg.text);
+        //Agregamos al firebase
+        profileController.saveAgent(agentCache, function(rs){
+
+        });
+
+    } else {
+        return bot.sendMessage(msg.from.id, 'El formato de fecha (YYYY-MM-DD) no es v\u00E1lido, prueba nuevamente', { ask: 'addFecNac' });
+    }
+});
+
+
+
 module.exports = router;
+
