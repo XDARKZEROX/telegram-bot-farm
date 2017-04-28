@@ -43,7 +43,15 @@ module.exports = {
 		}).catch((error) => {
 			console.log(error);
 		});
+	},
 
+	save: function(user){
+		var newChildRef = ref.push();
+		newChildRef.set({
+			name: user.get("name"),
+			codename: user.get("codename"),
+			date: user.get("date")
+		})
 	}
 
 }	   

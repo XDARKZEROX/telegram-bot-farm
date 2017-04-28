@@ -29,11 +29,13 @@ module.exports = {
     updateName: function (codename, newName, callback ) {
         //Procedemos a actualizar el registro en la tabla
         userModel.updateNameFromCodename(codename, newName, function () {
+        });
+    },
+
+    saveAgent: function(agent, callback) {
+        userModel.save(agent, function () {
 
         });
+
     }
-
-
-
-
 }
