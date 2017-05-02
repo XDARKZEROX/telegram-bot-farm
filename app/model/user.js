@@ -25,13 +25,13 @@ module.exports = {
 	},
 
 	getUserByCodename: function(param, callback) {
+
 		ref.orderByChild('codename').equalTo(param.toLowerCase()).once('value').then(function (snapshot) {
 			let rs;
 			snapshot.forEach(function(childSnapshot) {
-        		rs = childSnapshot.val();
+				rs = childSnapshot.val();
 			});
         	callback(rs);
-
         }).catch((error) => {
     		console.log(error);
     	});
@@ -45,13 +45,23 @@ module.exports = {
 		});
 	},
 
-	save: function(user){
+	save: function(user, callback){
 		var newChildRef = ref.push();
 		newChildRef.set({
 			name: user.get("name"),
-			codename: user.get("codename"),
+			codename: user.get("codename").toLowerCase(),
 			date: user.get("date")
-		})
+		}, function(error) {
+			if(error){
+				callback({
+					status: false,
+				});
+			} else {
+				callback({
+					status: true
+				});
+			}
+		});
 	}
 
 }	   

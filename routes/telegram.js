@@ -8,7 +8,6 @@ const nodeCache = require( "node-cache" );
 const agentCache = new nodeCache();
 bot.use(require('../modules/ask.js'));
 
-
 router.get('/', function(req, res, next) {
     console.log(bot.telegram);
     //Creamos instanciamos el tg
@@ -63,7 +62,6 @@ bot.on('callbackQuery', msg => {
                 markup = bot.inlineKeyboard([[bot.inlineButton('Agregar Informaci\u00f3n', { callback: 'agregar'})]]);
                 message = 'Parece que no tengo datos tuyos todavia.';
             }
-            console.log(msg);
             return bot.sendMessage(msg.from.id, message , { markup });
         });
     }
@@ -71,7 +69,8 @@ bot.on('callbackQuery', msg => {
         let markup = bot.inlineKeyboard([
             [
                 bot.inlineButton('Fecha de Nacimiento', { callback: 'fecha' }),
-                bot.inlineButton('Nombre', { callback: 'nombre' })
+                bot.inlineButton('Nombre', { callback: 'editName' }),
+                bot.inlineButton('CodeName', { callback: 'editCodename' })
             ]
         ]);
         return bot.sendMessage(msg.from.id, 'Escoge que campo deseas actualizar' , { markup });
@@ -83,10 +82,16 @@ bot.on('callbackQuery', msg => {
         return bot.sendMessage(msg.from.id, 'Ingresa la fecha de tu nacimiento (YYYY-MM-DD)', { ask: 'fecha' });
     }
     if(msg.data == 'agregar'){
-        return bot.sendMessage(msg.from.id, 'Perfecto. Para empezar ingresa tu nombre', { ask: 'addNombre' });
+        profileController.searchProfile(msg.from.username, function(rs) {
+            console.log(rs);
+            if(rs.status){
+                return bot.sendMessage(msg.from.id, 'Ya est\u00E1s registrado en la base de datos.');
+            } else {
+                return bot.sendMessage(msg.from.id, 'Perfecto. Para empezar ingresa tu nombre', { ask: 'addNombre' });
+            }
+        });
     }
 });
-
 
 bot.on('ask.codename', msg => {
     let codename = msg.text.trim();
@@ -103,7 +108,7 @@ bot.on('ask.nombre', msg => {
     const id = msg.from.id;
 
     profileController.updateName(msg.from.username, newName, function(rs) {
-        console.log(rs);
+        console.log('me falta');
     });
 });
 
@@ -135,9 +140,12 @@ bot.on('ask.addFecNac', msg => {
         agentCache.set("date", msg.text);
         //Agregamos al firebase
         profileController.saveAgent(agentCache, function(rs){
-
+            if(rs.status){
+                return bot.sendMessage(msg.from.id, 'Listo! Tu perfil ha sido registrado. Puedes usar el comando "birthdays" para ver tu info');
+            } else {
+                return bot.sendMessage(msg.from.id, 'Parece que ocurri\u00F3 de un error. Prueba nuevamete');
+            }
         });
-
     } else {
         return bot.sendMessage(msg.from.id, 'El formato de fecha (YYYY-MM-DD) no es v\u00E1lido, prueba nuevamente', { ask: 'addFecNac' });
     }

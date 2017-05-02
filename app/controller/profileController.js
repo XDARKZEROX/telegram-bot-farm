@@ -18,7 +18,7 @@ module.exports = {
                     data : response
                 });
             } else {
-                    callback({
+                callback({
                     status: false,
                     data : null
                 });
@@ -33,8 +33,8 @@ module.exports = {
     },
 
     saveAgent: function(agent, callback) {
-        userModel.save(agent, function () {
-
+        userModel.save(agent, function (response) {
+            console.log(response);
         });
 
     }
