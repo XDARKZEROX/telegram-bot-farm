@@ -37,5 +37,12 @@ module.exports = {
             console.log(response);
         });
 
-    }
+    },
+
+    updateDate: function (codename, newDate, callback ) {
+        //Procedemos a actualizar el registro en la tabla
+        userModel.updateDateFromCodename(codename, newDate, function (rs) {
+
+        });
+    },
 }

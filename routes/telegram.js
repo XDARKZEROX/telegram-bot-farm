@@ -75,7 +75,7 @@ bot.on('callbackQuery', msg => {
         ]);
         return bot.sendMessage(msg.from.id, 'Escoge que campo deseas actualizar' , { markup });
     }
-    if(msg.data == 'nombre'){
+    if(msg.data == 'editName'){
         return bot.sendMessage(msg.from.id, 'Ingresa el nuevo nombre', { ask: 'nombre' });
     }
     if(msg.data == 'fecha'){
@@ -114,8 +114,12 @@ bot.on('ask.nombre', msg => {
 
 bot.on('ask.fecha', msg => {
     //Validamos la fecha
+    let newDate = msg.text.trim();
+
     if(moment(msg.text.trim(), ["YYYY-MM-DD"], true).isValid()){
-        console.log('valido');
+        profileController.updateDate(msg.from.username, newDate, function(rs) {
+            console.log('me falta');
+        });
     } else {
         return bot.sendMessage(msg.from.id, 'El formato de fecha (YYYY-MM-DD) no es v\u00E1lido, prueba nuevamente', { ask: 'fecha' });
     }

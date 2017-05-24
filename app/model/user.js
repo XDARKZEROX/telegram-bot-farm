@@ -45,6 +45,14 @@ module.exports = {
 		});
 	},
 
+	updateDateFromCodename: function(codename, date) {
+		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(function (snapshot) {
+			snapshot.ref.update({ date: date })
+		}).catch((error) => {
+			console.log(error);
+		});
+	},
+
 	save: function(user, callback){
 		var newChildRef = ref.push();
 		newChildRef.set({
