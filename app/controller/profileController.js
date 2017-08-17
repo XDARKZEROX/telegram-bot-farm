@@ -1,17 +1,18 @@
-var express = require('express'),
-    router = express.Router(),
-    fs = require('fs'),
-    moment = require('moment');
-    emoji = require('node-emoji'),
-    config = require('../../config/config'),
-    async = require('async');
-    userModel = require('../model/user')
+const 
+express = require('express'),
+router = express.Router(),
+fs = require('fs'),
+moment = require('moment');
+emoji = require('node-emoji'),
+config = require('../../config/config'),
+async = require('async');
+userModel = require('../model/user')
 
 module.exports = {
 
-	searchProfile: function (codename, callback) {
+	searchProfile: (codename, callback) => {
         //Primero buscamos si el usuario posee un perfil creado o no.
-        userModel.getUserByCodename(codename, function(response){
+        userModel.getUserByCodename(codename, response => {
             if(response != undefined || response != null){
                 callback({
                     status: true,
@@ -26,23 +27,23 @@ module.exports = {
         });
     },
 
-    updateName: function (codename, newName, callback ) {
+    updateName: (codename, newName, callback) =>  {
         //Procedemos a actualizar el registro en la tabla
-        userModel.updateNameFromCodename(codename, newName, function () {
+        userModel.updateNameFromCodename(codename, newName, () => {
+            // TODO
         });
     },
 
-    saveAgent: function(agent, callback) {
-        userModel.save(agent, function (response) {
+    saveAgent: (agent, callback) => {
+        userModel.save(agent, (response) => {
             console.log(response);
         });
-
     },
 
-    updateDate: function (codename, newDate, callback ) {
+    updateDate: (codename, newDate, callback) => {
         //Procedemos a actualizar el registro en la tabla
-        userModel.updateDateFromCodename(codename, newDate, function (rs) {
-
+        userModel.updateDateFromCodename(codename, newDate, (rs) => {
+            // TODO
         });
     },
 }
