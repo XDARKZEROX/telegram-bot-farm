@@ -8,7 +8,6 @@ const config = {
     	projectId: "database-bot-birthday",
     	storageBucket: "database-bot-birthday.appspot.com",
     	messagingSenderId: "440795918390"
-	},
-	firebase_rest: 'https://database-bot-birthday.firebaseio.com/users.json'
+	}
 }
 module.exports = config;

@@ -1,66 +1,68 @@
-'use strict'
+'use strict';
 
-var  firebase = require('firebase'),
-	 config = require('../../config/config'),
-	 Client = require('node-rest-client').Client,
-	 async = require('async');
-var client = new Client();
+const
+	firebase = require('firebase'),
+	config = require('../../config/config'),
+	Client = require('node-rest-client').Client,
+	async = require('async');
+
+const client = new Client();
+
 firebase.initializeApp(config.firebase);
-var ref = firebase.database().ref().child("users"); 
-		
+const ref = firebase.database().ref().child("users");
+
 module.exports = {
 
-	getAll : function(callback) { 
+	getAll: (callback) => {
 		let users;
 		async.series([
-			function(callback) {
-        		client.get(config.firebase_rest, function (data, response) {
-    				users = data;
-    				callback();
-    			});        
-            }
-        ], function (err, result) {
-        	callback(users);
-   		});
+			(callback) => {
+				client.get(config.firebase.databaseURL + '/users.json', (data, response) => {
+					users = data;
+					callback();
+				});
+			}
+		],(err, result) => {
+			callback(users);
+		});
 	},
 
-	getUserByCodename: function(param, callback) {
-
-		ref.orderByChild('codename').equalTo(param.toLowerCase()).once('value').then(function (snapshot) {
+	getUserByCodename: (param, callback) => {
+		ref.orderByChild('codename').equalTo(param.toLowerCase()).once('value').then(snapshot => {
 			let rs;
-			snapshot.forEach(function(childSnapshot) {
+			snapshot.forEach(childSnapshot => {
 				rs = childSnapshot.val();
 			});
-        	callback(rs);
-        }).catch((error) => {
-    		console.log(error);
-    	});
+			callback(rs);
+		}).catch((error) => {
+			console.log(error);
+		});
 	},
 
-	updateNameFromCodename: function(codename, name) {
-		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(function (snapshot) {
+	updateNameFromCodename: (codename, name) => {
+		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(snapshot => {
 			snapshot.ref.update({ name: name })
-		}).catch((error) => {
+		}).catch(error => {
 			console.log(error);
 		});
 	},
 
-	updateDateFromCodename: function(codename, date) {
-		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(function (snapshot) {
+	updateDateFromCodename: (codename, date) => {
+		ref.orderByChild('codename').equalTo(codename.toLowerCase()).once('child_added').then(snapshot => {
 			snapshot.ref.update({ date: date })
-		}).catch((error) => {
+		}).catch(error => {
 			console.log(error);
 		});
 	},
 
-	save: function(user, callback){
+	save: (user, callback) => {
 		var newChildRef = ref.push();
 		newChildRef.set({
 			name: user.get("name"),
 			codename: user.get("codename").toLowerCase(),
 			date: user.get("date")
-		}, function(error) {
-			if(error){
+		}, error => {
+			if (error) {
 				callback({
 					status: false,
 				});
@@ -72,5 +74,5 @@ module.exports = {
 		});
 	}
 
-}	   
+}
 
