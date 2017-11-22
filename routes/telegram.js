@@ -7,6 +7,7 @@ const
     nodeCache = require('node-cache'),
     agentCache = new nodeCache()
     ;
+
 const bot = require('../config/bot');
 bot.use(require('../modules/ask.js'));
 
@@ -22,7 +23,6 @@ router.get('/', (req, res, next) => {
 
 bot.on('/birthdays', msg => {
     bot.sendMessage(msg.chat.id, 'Espere un momento ...');
-
     bot.sendChatAction(msg.chat.id, 'typing').then(() => {
         birthdayCtrl.getBirthdays((rs) => {
             let reply = msg.message_id;

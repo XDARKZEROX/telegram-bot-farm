@@ -1,6 +1,7 @@
 const TeleBot = require('telebot');
-const telegramConstants = require("../config/config");
+const telegramConstants = require('./database');
 const bot = new TeleBot(telegramConstants.botToken);
 
-bot.connect();
+bot.start();
+
 module.exports = bot;

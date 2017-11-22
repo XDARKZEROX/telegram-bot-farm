@@ -5,9 +5,10 @@ const
     moment = require('moment'),
     locale = require('moment/locale/es'),
     emoji = require('node-emoji'),
-    config = require('../../config/config'),
+    config = require('../../config/database'),
     async = require('async'),
-    userModel = require('../model/user')
+    userModel = require('../model/user'),
+    agentModel = require('../model/agent')
     ;
 
 moment.locale('es');
@@ -15,18 +16,20 @@ moment.locale('es');
 module.exports = {
     // Obtienes toda la lista de cumpleaños!
     getBirthdays: callback => {
-        //Antes cargaba de un archivo plano
-        //var birthdays = JSON.parse(fs.readFileSync('public/resources/birthdays.json', 'utf8'));
+
         let message = `<b>Lista de cumplea\u00f1os ${emoji.get('cake')} : </b>\n\n`;
-        userModel.getAll(response => {
-            if (response != null || response != undefined) {
-                for (var key in response) {
-                    message += `- ${response[key].name} ( ${moment(response[key].date).format('MMMM DD')} ) \n`;
+        agentModel.find(function(err, result) {
+            if (err) {
+                callback('Ocurrio un problema.');
+            } else {
+                if (result != null || result != undefined) {
+                    for (var key in result) {
+                        message += `- ${result[key].name} ( ${moment(result[key].date).format('MMMM DD')} ) \n`;
+                    }
+                    callback(message);
+                } else {
+                    callback('Parece que no tengo registros todavia. Puedes empezar agregando el tuyo con el comando /profile.');
                 }
-                callback(message);
-            }
-            else {
-                callback('Parece que no tengo registros todavia. Puedes empezar agregando el tuyo con el comando /profile.');
             }
         });
     },

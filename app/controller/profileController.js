@@ -4,7 +4,7 @@ router = express.Router(),
 fs = require('fs'),
 moment = require('moment');
 emoji = require('node-emoji'),
-config = require('../../config/config'),
+config = require('../../config/database'),
 async = require('async');
 userModel = require('../model/user')
 

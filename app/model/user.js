@@ -2,7 +2,7 @@
 
 const
 	firebase = require('firebase'),
-	config = require('../../config/config'),
+	config = require('../../config/database'),
 	Client = require('node-rest-client').Client,
 	async = require('async');
 
